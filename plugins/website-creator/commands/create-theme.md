@@ -4,6 +4,21 @@ Create a complete WordPress block theme from a description.
 
 ## Workflow
 
+### Phase 0: Existing Content Check
+
+**ALWAYS ask first:**
+> Is this a new site or a redesign of an existing site?
+
+If redesign:
+1. Ask for WordPress XML export file (preferred), OR
+2. Ask for the existing site URL to scrape key content
+
+Use the `content-import` skill to:
+- Parse XML export or scrape existing site
+- Extract pages, posts, navigation structure
+- Summarize content for user confirmation
+- Use real content in theme preview (not placeholder text)
+
 ### Phase 1: Discovery
 
 Use the `wp-block-themes` skill's design phase questions:
@@ -66,8 +81,13 @@ Provide the user with:
 
 ## Example Usage
 
+### New Site
 ```
 User: /create-theme I want a playful site for my digital agency called Craft Digital
+
+Claude: Is this a new site or a redesign of an existing site?
+
+User: New site
 
 Claude: [Asks clarifying questions about site type, tone, logo]
 Claude: [Creates 3-4 design mockups]
@@ -76,8 +96,22 @@ User: I like the Geometric Pop design!
 
 Claude: [Builds full WordPress block theme]
 Claude: [Creates Playground preview]
+```
 
-User: I love it - how do I get this live?
+### Redesign
+```
+User: /create-theme I want to redesign mysite.com
 
-Claude: [Uses theme-deploy skill to present hosting options]
+Claude: Is this a new site or a redesign of an existing site?
+
+User: Redesign
+
+Claude: Do you have a WordPress XML export, or should I scrape the existing site?
+
+User: Here's the XML [uploads file]
+
+Claude: [Parses XML, summarizes content found]
+Claude: Found 12 pages, 45 posts, navigation structure...
+Claude: [Asks about desired new tone/feel]
+Claude: [Creates mockups using real content]
 ```
