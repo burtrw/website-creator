@@ -16,6 +16,17 @@ description: "Use when developing WordPress block themes - theme.json (global se
     text-wrap: pretty;   /* Prevents orphan words in paragraphs */
   }
   ```
+- **WCAG CONTRAST**: All text must meet WCAG AA contrast requirements:
+  - **Normal text** (< 18pt): minimum **4.5:1** contrast ratio
+  - **Large text** (≥ 18pt or 14pt bold): minimum **3:1** contrast ratio
+  - **Never** use dark text on dark backgrounds or light text on light backgrounds
+  - Test colors at https://webaim.org/resources/contrastchecker/
+
+  Common failures to avoid:
+  - Gray text (#666) on white (#fff) — often fails for small text
+  - Dark green text on dark green background
+  - Light yellow text on white
+  - Placeholder text that's too faint
 
 ---
 

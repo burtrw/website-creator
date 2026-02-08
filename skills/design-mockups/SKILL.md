@@ -128,6 +128,23 @@ p {
 }
 ```
 
+### Accessibility: Color Contrast
+
+**All mockups must meet WCAG AA contrast requirements:**
+
+| Text Type | Minimum Ratio |
+|-----------|---------------|
+| Normal text (< 18pt) | **4.5:1** |
+| Large text (≥ 18pt or 14pt bold) | **3:1** |
+
+**Common failures to avoid:**
+- Dark text on dark backgrounds (e.g., dark green on forest green)
+- Light text on light backgrounds
+- Gray (#666) on white often fails for body text
+- Muted/placeholder text that's too faint
+
+**Test your palette:** https://webaim.org/resources/contrastchecker/
+
 ### Color Palette Convention
 
 ```css
