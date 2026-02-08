@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "website-creator",
-      "source": "..",
+      "source": ".",
       "description": "Create WordPress block themes from simple descriptions. Interactive workflow: describe your site, review design mockups, pick a direction, preview in WordPress Playground, and deploy to WordPress.com or self-host."
     }
   ]
