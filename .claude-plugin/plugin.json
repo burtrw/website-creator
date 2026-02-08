@@ -8,7 +8,8 @@
   "skills": [
     "../skills/wp-block-themes",
     "../skills/design-mockups",
-    "../skills/theme-deploy"
+    "../skills/theme-deploy",
+    "../skills/content-import"
   ],
   "commands": [
     "../commands/create-theme.md",

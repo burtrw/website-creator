@@ -16,6 +16,7 @@ A Cowork plugin that creates websites from simple descriptions with live WordPre
 | `wp-block-themes` | WordPress FSE theme architecture, theme.json, templates, patterns, design systems |
 | `design-mockups` | Create and present HTML/CSS design mockups |
 | `theme-deploy` | Deploy themes to WordPress.com or export for self-hosting |
+| `content-import` | Import existing content from WordPress WXR/XML exports for redesigns |
 
 ## Example Workflow
 
@@ -98,6 +99,8 @@ website-creator/
     │   └── SKILL.md
     ├── design-mockups/
     │   └── SKILL.md
-    └── theme-deploy/
+    ├── theme-deploy/
+    │   └── SKILL.md
+    └── content-import/
         └── SKILL.md
 ```
