@@ -607,11 +607,27 @@ Use Pillow to generate a screenshot that represents the design.
 
 ## Image Handling
 
-Use Unsplash for realistic placeholder images with sizing parameters:
+### Image Color Cohesion (Required)
+
+**Hero and prominent images MUST incorporate the site's color palette.**
+
+Don't just grab random Unsplash photos — they'll look disconnected. Options:
+
+1. **Generate with AI** — Use DALL-E/Midjourney with exact hex colors from the palette
+2. **Edit stock images** — Add duotone effects, color overlays, or gradient washes
+3. **CSS overlays** — Apply brand color gradients over hero images:
+   ```css
+   .wp-block-cover::after {
+       background: linear-gradient(135deg, rgba(PRIMARY, 0.3), rgba(SECONDARY, 0.2));
+   }
+   ```
+
+### Fallback: Unsplash with Overlays
+
+If using Unsplash, always pair with a color overlay:
 
 ```html
-<!-- Hero background (full-width) -->
-<img src="https://images.unsplash.com/photo-XXXX?w=1920&h=1080&fit=crop" alt="Hero background">
+<!-- wp:cover {"url":"https://images.unsplash.com/photo-XXXX","dimRatio":40,"overlayColor":"primary"} -->
 ```
 
 **Select contextually appropriate images:**
@@ -620,6 +636,8 @@ Use Unsplash for realistic placeholder images with sizing parameters:
 - Architecture for real estate
 - Nature for wellness brands
 - Abstract/geometric for tech
+
+**The goal:** Images should feel *designed for this site*, not stock.
 
 ---
 

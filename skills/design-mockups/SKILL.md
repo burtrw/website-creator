@@ -157,6 +157,34 @@ p {
 }
 ```
 
+### Image Color Cohesion
+
+**Hero and prominent images must incorporate the site's color palette.**
+
+Random stock photos look disconnected. For a polished, professional feel:
+
+1. **Generate images with brand colors** — Use AI image generation (DALL-E, Midjourney) specifying the exact hex colors from the palette
+2. **Edit Unsplash images** — Add color overlays, duotone effects, or gradient washes that incorporate brand colors
+3. **Use CSS overlays** — Apply gradient overlays on hero images using brand colors:
+   ```css
+   .hero {
+       position: relative;
+   }
+   .hero::after {
+       content: '';
+       position: absolute;
+       inset: 0;
+       background: linear-gradient(135deg, rgba(YOUR_PRIMARY, 0.3), rgba(YOUR_SECONDARY, 0.2));
+   }
+   ```
+
+**Examples of color integration:**
+- Button accent color appears subtly in hero image lighting/objects
+- Background section color echoed in product photography
+- Brand green reflected in landscape/nature imagery tones
+
+**The goal:** When you look at the page, the images feel *designed for this site*, not grabbed from a stock library.
+
 ## Design Phase Workflow
 
 ### Phase 1: Style Exploration
