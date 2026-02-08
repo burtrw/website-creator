@@ -28,6 +28,18 @@ description: "Use when developing WordPress block themes - theme.json (global se
   - Light yellow text on white
   - Placeholder text that's too faint
 
+- **IMAGE COLOR COHESION**: Hero and prominent images MUST incorporate the site's color palette. No random stock photos.
+
+  **Image sourcing (in order of preference):**
+  1. **Unsplash → Midjourney edit** — Find Unsplash image with right composition, use Midjourney to restyle with brand colors
+  2. **Generate from scratch** — DALL-E/Midjourney with exact hex colors
+  3. **CSS overlays (fallback)** — Gradient overlays using brand colors:
+     ```html
+     <!-- wp:cover {"overlayColor":"primary","dimRatio":40} -->
+     ```
+
+  **The goal:** Images feel *designed for this site*, not stock.
+
 ---
 
 ## Design Phase Questions
@@ -605,39 +617,16 @@ PYTHON_EOF
 
 Use Pillow to generate a screenshot that represents the design.
 
-## Image Handling
+## Image Context by Site Type
 
-### Image Color Cohesion (Required)
+When sourcing/generating images, match the subject matter to the site:
+- **SaaS/Tech** — Office/workspace, abstract/geometric
+- **Restaurant** — Food photography, ingredients, atmosphere
+- **Real estate** — Architecture, interiors, neighborhoods
+- **Wellness** — Nature, calm spaces, people
+- **Creative/Portfolio** — Bold visuals, artistic shots
 
-**Hero and prominent images MUST incorporate the site's color palette.**
-
-Don't just grab random Unsplash photos — they'll look disconnected. Options:
-
-1. **Generate with AI** — Use DALL-E/Midjourney with exact hex colors from the palette
-2. **Edit stock images** — Add duotone effects, color overlays, or gradient washes
-3. **CSS overlays** — Apply brand color gradients over hero images:
-   ```css
-   .wp-block-cover::after {
-       background: linear-gradient(135deg, rgba(PRIMARY, 0.3), rgba(SECONDARY, 0.2));
-   }
-   ```
-
-### Fallback: Unsplash with Overlays
-
-If using Unsplash, always pair with a color overlay:
-
-```html
-<!-- wp:cover {"url":"https://images.unsplash.com/photo-XXXX","dimRatio":40,"overlayColor":"primary"} -->
-```
-
-**Select contextually appropriate images:**
-- Office/workspace for SaaS
-- Food photography for restaurants
-- Architecture for real estate
-- Nature for wellness brands
-- Abstract/geometric for tech
-
-**The goal:** Images should feel *designed for this site*, not stock.
+See **Absolute Rules > IMAGE COLOR COHESION** for sourcing workflow.
 
 ---
 

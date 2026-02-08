@@ -14,6 +14,38 @@ Activate this skill when:
 - Creating multiple style explorations (terminal, editorial, minimal, etc.)
 - Iterating on visual direction for a website
 
+---
+
+## CRITICAL: Image Color Cohesion
+
+**Hero and prominent images MUST incorporate the site's color palette.**
+
+Random stock photos look disconnected and amateurish. For a polished, professional feel:
+
+### Image Sourcing Options (in order of preference)
+
+1. **Unsplash → Midjourney edit** — Find an Unsplash image with the right composition, then use Midjourney to edit/restyle it with brand colors
+2. **Generate from scratch** — Use DALL-E/Midjourney specifying exact hex colors from the palette
+3. **Edit in image tool** — Add duotone effects, color overlays, or gradient washes in Photoshop/Figma
+4. **CSS overlays (fallback)** — Apply gradient overlays on hero images:
+   ```css
+   .hero::after {
+       content: '';
+       position: absolute;
+       inset: 0;
+       background: linear-gradient(135deg, rgba(PRIMARY, 0.3), rgba(SECONDARY, 0.2));
+   }
+   ```
+
+### Examples of Color Integration
+- Button accent color appears subtly in hero image lighting/objects
+- Background section color echoed in product photography
+- Brand green reflected in landscape/nature imagery tones
+
+**The goal:** Images should feel *designed for this site*, not grabbed from a stock library.
+
+---
+
 ## Project Structure
 
 ```
@@ -156,34 +188,6 @@ p {
     --primary-light: #FFE8D6; /* Light variant */
 }
 ```
-
-### Image Color Cohesion
-
-**Hero and prominent images must incorporate the site's color palette.**
-
-Random stock photos look disconnected. For a polished, professional feel:
-
-1. **Generate images with brand colors** — Use AI image generation (DALL-E, Midjourney) specifying the exact hex colors from the palette
-2. **Edit Unsplash images** — Add color overlays, duotone effects, or gradient washes that incorporate brand colors
-3. **Use CSS overlays** — Apply gradient overlays on hero images using brand colors:
-   ```css
-   .hero {
-       position: relative;
-   }
-   .hero::after {
-       content: '';
-       position: absolute;
-       inset: 0;
-       background: linear-gradient(135deg, rgba(YOUR_PRIMARY, 0.3), rgba(YOUR_SECONDARY, 0.2));
-   }
-   ```
-
-**Examples of color integration:**
-- Button accent color appears subtly in hero image lighting/objects
-- Background section color echoed in product photography
-- Brand green reflected in landscape/nature imagery tones
-
-**The goal:** When you look at the page, the images feel *designed for this site*, not grabbed from a stock library.
 
 ## Design Phase Workflow
 
