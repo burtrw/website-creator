@@ -15,7 +15,7 @@
         "name": "Ronnie Burt",
         "email": "burtrw@gmail.com"
       },
-      "source": ".",
+      "source": "./plugins/website-creator",
       "category": "development",
       "homepage": "https://github.com/burtrw/website-creator"
     }
