@@ -1,40 +1,35 @@
 ---
 name: content-import
-description: "Import existing website content from WordPress WXR/XML exports. Use when redesigning an existing site to preserve content. Triggers: 'import content', 'existing site', 'WordPress export', 'WXR', 'XML import', 'migrate content', 'redesign my site'."
+description: "Import existing website content for redesigns. Use when redesigning an existing site. Triggers: 'import content', 'existing site', 'WordPress export', 'XML import', 'migrate content', 'redesign my site', 'my current site is...'."
 ---
 
 # Content Import Skill
 
-Import existing content from WordPress exports to use with new theme designs.
+Import existing content when redesigning a site.
 
 ## When to Use
 
-- User is redesigning an existing WordPress site
-- User has a WordPress WXR/XML export file
-- User wants to preview new theme with their real content (not lorem ipsum)
+- User is redesigning an existing site
+- User has an export file (WordPress XML preferred)
+- User provides a URL to their existing site
 
-## Supported Formats
+## Content Sources (in order of preference)
 
-| Format | Extension | Source |
-|--------|-----------|--------|
-| WordPress WXR | `.xml` | Tools → Export in WordPress admin |
-| WordPress.com Export | `.xml` | Settings → Export in WordPress.com |
+### 1. WordPress XML Export (Preferred)
 
-## Workflow
+The most complete option — includes posts, pages, categories, tags, menus, and metadata.
 
-### Step 1: Parse the Export File
+**How to get it:** Tools → Export in WordPress admin (or Settings → Export on WordPress.com)
 
 ```python
 import xml.etree.ElementTree as ET
 from html import unescape
-import re
 
-def parse_wxr(xml_path):
-    """Parse WordPress WXR export file."""
+def parse_wordpress_xml(xml_path):
+    """Parse WordPress XML export file."""
     tree = ET.parse(xml_path)
     root = tree.getroot()
 
-    # Namespace handling
     ns = {
         'wp': 'http://wordpress.org/export/1.2/',
         'content': 'http://purl.org/rss/1.0/modules/content/',
@@ -51,12 +46,10 @@ def parse_wxr(xml_path):
         'menus': [],
     }
 
-    # Site info
     channel = root.find('channel')
     content['site_title'] = channel.findtext('title', '')
     content['site_description'] = channel.findtext('description', '')
 
-    # Parse items (posts, pages, attachments, nav_menu_items)
     for item in channel.findall('item'):
         post_type = item.findtext('wp:post_type', '', ns)
         status = item.findtext('wp:status', '', ns)
@@ -73,7 +66,6 @@ def parse_wxr(xml_path):
         }
 
         if post_type == 'post':
-            # Get categories and tags
             entry['categories'] = [c.text for c in item.findall('category[@domain="category"]')]
             entry['tags'] = [t.text for t in item.findall('category[@domain="post_tag"]')]
             content['posts'].append(entry)
@@ -85,53 +77,115 @@ def parse_wxr(xml_path):
                 'url': item.findtext('wp:postmeta[wp:meta_key="menu_item_url"]/wp:meta_value', '', ns),
             })
 
-    # Parse categories
     for cat in channel.findall('wp:category', ns):
         content['categories'].append({
             'name': cat.findtext('wp:cat_name', '', ns),
             'slug': cat.findtext('wp:category_nicename', '', ns),
         })
 
-    # Parse tags
-    for tag in channel.findall('wp:tag', ns):
-        content['tags'].append({
-            'name': tag.findtext('wp:tag_name', '', ns),
-            'slug': tag.findtext('wp:tag_slug', '', ns),
-        })
+    return content
+```
+
+### 2. Scrape Existing Site (No Export File)
+
+If user doesn't have an export file but provides their site URL, scrape key pages:
+
+```python
+def scrape_existing_site(base_url):
+    """Scrape starter content from an existing site."""
+    from urllib.request import urlopen
+    from html.parser import HTMLParser
+    import re
+
+    content = {
+        'site_title': '',
+        'site_description': '',
+        'pages': [],
+        'navigation': [],
+    }
+
+    # Pages to attempt scraping
+    key_pages = [
+        ('/', 'Home'),
+        ('/about', 'About'),
+        ('/about-us', 'About'),
+        ('/services', 'Services'),
+        ('/contact', 'Contact'),
+        ('/contact-us', 'Contact'),
+    ]
+
+    for path, default_title in key_pages:
+        try:
+            url = base_url.rstrip('/') + path
+            # Use WebFetch tool to get page content
+            # Extract: title, main heading, body text, images
+            page_content = fetch_and_parse(url)
+            if page_content:
+                content['pages'].append({
+                    'title': page_content.get('title', default_title),
+                    'slug': path.strip('/') or 'home',
+                    'content': page_content.get('main_content', ''),
+                    'headings': page_content.get('headings', []),
+                })
+        except:
+            continue
+
+    # Try to extract navigation structure from homepage
+    try:
+        nav = extract_navigation(base_url)
+        content['navigation'] = nav
+    except:
+        pass
 
     return content
 ```
 
-### Step 2: Present Content Summary
+**What to extract when scraping:**
+- Site title and tagline (from `<title>` and meta description)
+- Navigation menu structure (from `<nav>` elements)
+- Homepage hero text and CTA
+- About page content
+- Services/offerings list
+- Contact information
+- Key headings and body copy
 
-After parsing, show the user what was found:
+### 3. Other Import Formats
+
+Support other formats when provided:
+- **JSON** — Parse and map to content structure
+- **CSV** — For posts/products with title, content, category columns
+- **Markdown files** — Convert to WordPress content
+- **HTML files** — Extract content from static site
+
+## Workflow
+
+### Step 1: Gather Content
+
+Ask user:
+1. Do you have a WordPress XML export file?
+2. If not, what's the URL of your existing site?
+
+### Step 2: Parse/Scrape and Summarize
 
 ```markdown
-## Imported Content Summary
+## Content Found
 
 **Site:** [Site Title]
-**Tagline:** [Site Description]
+**Tagline:** [Description]
 
-| Content Type | Count |
-|--------------|-------|
-| Posts | X |
+| Type | Count |
+|------|-------|
 | Pages | X |
-| Categories | X |
-| Tags | X |
+| Posts | X |
 | Menu Items | X |
 
 ### Pages
-- Home
-- About
-- Contact
-- Services
+- Home — [brief description of content]
+- About — [brief description]
+- Services — [brief description]
+- Contact — [brief description]
 
-### Recent Posts
-1. [Post Title] (Jan 15, 2024)
-2. [Post Title] (Jan 10, 2024)
-3. [Post Title] (Jan 5, 2024)
-
-### Menu Structure
+### Navigation Structure
 - Home
 - About
 - Services
@@ -140,13 +194,13 @@ After parsing, show the user what was found:
 - Contact
 ```
 
-### Step 3: Use Content in Playground Blueprint
+### Step 3: Use Content in Theme Preview
 
-Add content to the blueprint so the theme preview shows real content:
+Add scraped/imported content to the Playground blueprint:
 
 ```python
 def create_content_steps(content):
-    """Generate blueprint steps to import content."""
+    """Generate blueprint steps to populate content."""
     steps = []
 
     # Create pages
@@ -165,74 +219,30 @@ wp_insert_post([
 ?>'''
         })
 
-    # Create posts
-    for post in content['posts'][:10]:  # Limit to 10 for preview
+    # Set site title
+    if content.get('site_title'):
         steps.append({
             "step": "runPHP",
             "code": f'''<?php
 require_once 'wp-load.php';
-wp_insert_post([
-    'post_title' => {repr(post['title'])},
-    'post_name' => {repr(post['slug'])},
-    'post_content' => {repr(post['content'])},
-    'post_status' => 'publish',
-    'post_type' => 'post',
-]);
+update_option('blogname', {repr(content['site_title'])});
+update_option('blogdescription', {repr(content.get('site_description', ''))});
 ?>'''
         })
-
-    # Set site title
-    steps.append({
-        "step": "runPHP",
-        "code": f'''<?php
-require_once 'wp-load.php';
-update_option('blogname', {repr(content['site_title'])});
-update_option('blogdescription', {repr(content['site_description'])});
-?>'''
-    })
 
     return steps
 ```
 
-### Step 4: Integrate with Theme Blueprint
-
-```python
-# Full blueprint with theme + content
-blueprint = {
-    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-    "landingPage": "/",
-    "steps": [
-        # Theme installation steps...
-        {"step": "writeFile", "path": "...", "data": {"resource": "url", "url": f"data:application/zip;base64,{theme_data}"}},
-        {"step": "unzip", ...},
-        {"step": "activateTheme", ...},
-
-        # Content import steps
-        *create_content_steps(imported_content),
-
-        # Set homepage
-        {"step": "runPHP", "code": '''<?php
-require_once 'wp-load.php';
-$home = get_page_by_path('home');
-if ($home) {
-    update_option('show_on_front', 'page');
-    update_option('page_on_front', $home->ID);
-}
-?>'''},
-    ]
-}
-```
-
 ## Important Notes
 
-1. **Content goes in database, not templates** — The theme should use dynamic blocks (`post-content`, `query`) to display this content
-2. **Preview only** — Playground content is temporary; real import happens on the live site
-3. **Limit content for preview** — Import ~10 posts max to keep blueprint size reasonable
-4. **Preserve structure** — Note the menu structure and page hierarchy for navigation patterns
+1. **Content goes in database, not templates** — Theme uses dynamic blocks to display content
+2. **Preview only** — Playground content is temporary; real import happens on live site
+3. **Limit content for preview** — Keep blueprint size reasonable (~10 posts max)
+4. **Preserve structure** — Use navigation structure to inform header/menu design
 
 ## Integration with Other Skills
 
-After importing content:
-1. Use `design-mockups` skill to create designs informed by actual content structure
-2. Use `wp-block-themes` skill to build theme with dynamic templates
-3. Use `theme-deploy` skill to deploy — user imports content separately on live site
+1. Import content first
+2. Use `design-mockups` skill informed by actual content structure
+3. Use `wp-block-themes` skill to build theme with dynamic templates
+4. Use `theme-deploy` skill — user imports content separately on live site
