@@ -17,7 +17,9 @@ Use the `content-import` skill to:
 - Parse XML export or scrape existing site
 - Extract pages, posts, navigation structure
 - Summarize content for user confirmation
-- Use real content in theme preview (not placeholder text)
+- Inform design decisions (navigation, layout, content length)
+
+**Note:** Content is NOT added to the blueprint (bloats file size). User imports content separately on live site.
 
 ### Phase 1: Discovery
 

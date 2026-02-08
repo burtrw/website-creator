@@ -194,51 +194,24 @@ Ask user:
 - Contact
 ```
 
-### Step 3: Use Content in Theme Preview
+### Step 3: Use Content to Inform Design
 
-Add scraped/imported content to the Playground blueprint:
+**DO NOT add content to the blueprint** — it bloats the file size.
 
-```python
-def create_content_steps(content):
-    """Generate blueprint steps to populate content."""
-    steps = []
+Instead, use imported content to:
+- **Inform navigation structure** — Build header/menu based on actual pages
+- **Match content length** — Design layouts that fit real content (not lorem ipsum)
+- **Identify key sections** — Hero text, CTAs, service offerings
+- **Set site title/tagline** — Use in mockups and theme preview
 
-    # Create pages
-    for page in content['pages']:
-        steps.append({
-            "step": "runPHP",
-            "code": f'''<?php
-require_once 'wp-load.php';
-wp_insert_post([
-    'post_title' => {repr(page['title'])},
-    'post_name' => {repr(page['slug'])},
-    'post_content' => {repr(page['content'])},
-    'post_status' => 'publish',
-    'post_type' => 'page',
-]);
-?>'''
-        })
-
-    # Set site title
-    if content.get('site_title'):
-        steps.append({
-            "step": "runPHP",
-            "code": f'''<?php
-require_once 'wp-load.php';
-update_option('blogname', {repr(content['site_title'])});
-update_option('blogdescription', {repr(content.get('site_description', ''))});
-?>'''
-        })
-
-    return steps
-```
+The Playground preview shows the theme structure with placeholder content. The user imports their real content after deploying to their live site.
 
 ## Important Notes
 
-1. **Content goes in database, not templates** — Theme uses dynamic blocks to display content
-2. **Preview only** — Playground content is temporary; real import happens on live site
-3. **Limit content for preview** — Keep blueprint size reasonable (~10 posts max)
-4. **Preserve structure** — Use navigation structure to inform header/menu design
+1. **Content informs design, not blueprint** — Don't inject content into Playground (bloats file size)
+2. **Templates use dynamic blocks** — Theme pulls content from database, not hardcoded
+3. **User imports separately** — After deploying theme, user imports XML on live site
+4. **Preserve structure** — Use navigation structure to inform header/menu patterns
 
 ## Integration with Other Skills
 
