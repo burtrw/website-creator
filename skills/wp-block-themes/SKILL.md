@@ -75,7 +75,39 @@ h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
 p { text-wrap: pretty; }
 ```
 
-- **IMAGE COLOR COHESION**: Hero and prominent images MUST incorporate the site's color palette. No random stock photos.
+### 4. NO HARDCODED CONTENT IN TEMPLATES
+Templates must only use **dynamic blocks** that pull content from the database. Static content belongs in **patterns** that users insert manually.
+
+```html
+<!-- GOOD: Template displays database content -->
+<!-- wp:post-title /-->
+<!-- wp:post-content /-->
+<!-- wp:post-featured-image /-->
+<!-- wp:query {"queryId":1} -->...<!-- /wp:query -->
+
+<!-- BAD: Hardcoded content in template (causes duplicates on import) -->
+<!-- wp:heading -->
+<h2>Welcome to Our Agency</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>We build amazing websites...</p>
+<!-- /wp:paragraph -->
+```
+
+**Why this matters:**
+- Users importing existing content won't get duplicates
+- Theme can be applied to any site without content conflicts
+- Content lives in database, theme provides structure + styling
+
+**Where content goes:**
+| Type | Location | Purpose |
+|------|----------|---------|
+| Templates | `templates/` | Structure only — header, footer, content areas |
+| Patterns | `patterns/` | Reusable blocks users INSERT into pages |
+| Actual content | Database | Posts, pages, created by user or imported |
+
+### 5. IMAGE COLOR COHESION
+Hero and prominent images MUST incorporate the site's color palette. No random stock photos.
 
   **Image sourcing (in order of preference):**
   1. **Unsplash → Midjourney edit** — Find Unsplash image with right composition, use Midjourney to restyle with brand colors
