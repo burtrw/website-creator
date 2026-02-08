@@ -1,0 +1,16 @@
+{
+  "name": "website-creator",
+  "version": "1.0.0",
+  "description": "Create WordPress block themes from simple descriptions with live Playground preview",
+  "owner": {
+    "name": "Ronnie Burt",
+    "url": "https://github.com/burtrw"
+  },
+  "plugins": [
+    {
+      "name": "website-creator",
+      "source": "..",
+      "description": "Create WordPress block themes from simple descriptions. Interactive workflow: describe your site, review design mockups, pick a direction, preview in WordPress Playground, and deploy to WordPress.com or self-host."
+    }
+  ]
+}
