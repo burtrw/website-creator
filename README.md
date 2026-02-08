@@ -87,7 +87,8 @@ claude plugins add /path/to/website-creator
 
 ```
 website-creator/
-├── plugin.json
+├── .claude-plugin/
+│   └── plugin.json
 ├── README.md
 ├── commands/
 │   ├── create-theme.md

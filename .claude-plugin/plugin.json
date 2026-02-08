@@ -6,12 +6,12 @@
     "name": "Ronnie Burt"
   },
   "skills": [
-    "skills/wp-block-themes",
-    "skills/design-mockups",
-    "skills/theme-deploy"
+    "../skills/wp-block-themes",
+    "../skills/design-mockups",
+    "../skills/theme-deploy"
   ],
   "commands": [
-    "commands/create-theme.md",
-    "commands/deploy-theme.md"
+    "../commands/create-theme.md",
+    "../commands/deploy-theme.md"
   ]
 }
