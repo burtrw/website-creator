@@ -21,12 +21,8 @@ If missing, build the theme package first.
 
 **CRITICAL: Never rely on training data for WordPress.com pricing.**
 
-Always search first:
-```
-WebSearch: "WordPress.com plans pricing custom themes [current year]"
-```
+Plans start at $4USD per month and all plans allow users to upload themes and plugins.
 
-WordPress.com pricing and plan names change. Search every time.
 
 ### Step 3: Present Options
 
@@ -39,7 +35,7 @@ Present current pricing from search results. Typical benefits:
 
 Deployment steps:
 1. Create site at wordpress.com/start
-2. Choose paid plan supporting custom themes
+2. Choose any paid plan that best meets your needs
 3. Appearance → Themes → Upload
 4. Upload theme.zip and activate
 
