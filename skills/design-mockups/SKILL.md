@@ -46,6 +46,50 @@ Random stock photos look disconnected and amateurish. For a polished, profession
 
 ---
 
+## CRITICAL: Contrast Verification
+
+**Run this check on every color palette BEFORE creating mockups:**
+
+```python
+def check_contrast(hex1, hex2):
+    """Returns contrast ratio between two hex colors."""
+    def hex_to_rgb(h):
+        h = h.lstrip('#')
+        return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+
+    def luminance(rgb):
+        r, g, b = [x/255 for x in rgb]
+        r = r/12.92 if r <= 0.03928 else ((r+0.055)/1.055)**2.4
+        g = g/12.92 if g <= 0.03928 else ((g+0.055)/1.055)**2.4
+        b = b/12.92 if b <= 0.03928 else ((b+0.055)/1.055)**2.4
+        return 0.2126*r + 0.7152*g + 0.0722*b
+
+    l1, l2 = luminance(hex_to_rgb(hex1)), luminance(hex_to_rgb(hex2))
+    return (max(l1,l2) + 0.05) / (min(l1,l2) + 0.05)
+
+# UPDATE THESE WITH YOUR PALETTE
+palette = {
+    'bg': '#FFFFFF',
+    'text': '#1a1a1a',
+    'muted': '#666666',
+    'primary': '#BF5700',
+}
+
+# Check all text/background combinations
+for name, color in palette.items():
+    if name != 'bg':
+        ratio = check_contrast(color, palette['bg'])
+        status = "PASS" if ratio >= 4.5 else "FAIL"
+        print(f"{name} on bg: {ratio:.1f}:1 [{status}]")
+```
+
+**Requirements:**
+- Normal text: **4.5:1** minimum
+- Large text (18pt+): **3:1** minimum
+- **DO NOT create mockups with FAIL results — fix the palette first**
+
+---
+
 ## Project Structure
 
 ```
@@ -160,24 +204,9 @@ p {
 }
 ```
 
-### Accessibility: Color Contrast
-
-**All mockups must meet WCAG AA contrast requirements:**
-
-| Text Type | Minimum Ratio |
-|-----------|---------------|
-| Normal text (< 18pt) | **4.5:1** |
-| Large text (≥ 18pt or 14pt bold) | **3:1** |
-
-**Common failures to avoid:**
-- Dark text on dark backgrounds (e.g., dark green on forest green)
-- Light text on light backgrounds
-- Gray (#666) on white often fails for body text
-- Muted/placeholder text that's too faint
-
-**Test your palette:** https://webaim.org/resources/contrastchecker/
-
 ### Color Palette Convention
+
+**Run the contrast check script (see CRITICAL section above) before using any palette.**
 
 ```css
 :root {

@@ -6,27 +6,74 @@ description: "Use when developing WordPress block themes - theme.json (global se
 # WP Block Themes Skill
 
 ## Absolute Rules
-- **NO EMOJIS**: Never use emojis anywhere in generated content - not in headings, paragraphs, button text, or any other text. This applies to all templates, patterns, and content.
-- **NO ORPHANS**: Always use CSS text-wrap to prevent single words on their own line:
-  ```css
-  h1, h2, h3, h4, h5, h6 {
-    text-wrap: balance;  /* Balances line lengths in headings */
-  }
-  p {
-    text-wrap: pretty;   /* Prevents orphan words in paragraphs */
-  }
-  ```
-- **WCAG CONTRAST**: All text must meet WCAG AA contrast requirements:
-  - **Normal text** (< 18pt): minimum **4.5:1** contrast ratio
-  - **Large text** (≥ 18pt or 14pt bold): minimum **3:1** contrast ratio
-  - **Never** use dark text on dark backgrounds or light text on light backgrounds
-  - Test colors at https://webaim.org/resources/contrastchecker/
 
-  Common failures to avoid:
-  - Gray text (#666) on white (#fff) — often fails for small text
-  - Dark green text on dark green background
-  - Light yellow text on white
-  - Placeholder text that's too faint
+### 1. WCAG CONTRAST (Verify Before Presenting ANY Design)
+
+**Run this check on every color palette BEFORE creating mockups or themes:**
+
+```python
+def check_contrast(hex1, hex2):
+    """Returns contrast ratio between two hex colors."""
+    def hex_to_rgb(h):
+        h = h.lstrip('#')
+        return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+
+    def luminance(rgb):
+        r, g, b = [x/255 for x in rgb]
+        r = r/12.92 if r <= 0.03928 else ((r+0.055)/1.055)**2.4
+        g = g/12.92 if g <= 0.03928 else ((g+0.055)/1.055)**2.4
+        b = b/12.92 if b <= 0.03928 else ((b+0.055)/1.055)**2.4
+        return 0.2126*r + 0.7152*g + 0.0722*b
+
+    l1, l2 = luminance(hex_to_rgb(hex1)), luminance(hex_to_rgb(hex2))
+    lighter, darker = max(l1, l2), min(l1, l2)
+    return (lighter + 0.05) / (darker + 0.05)
+
+# CHECK ALL TEXT/BACKGROUND COMBINATIONS
+palette = {
+    'bg': '#FFFFFF',
+    'text': '#1a1a1a',
+    'muted': '#666666',
+    'primary': '#BF5700',
+    'primary_bg': '#2D5016',  # Example dark section
+}
+
+pairs_to_check = [
+    ('text', 'bg', 4.5),        # Body text on background
+    ('muted', 'bg', 4.5),       # Muted text on background
+    ('primary', 'bg', 3.0),     # Accent (if used as large text)
+    ('bg', 'primary_bg', 4.5),  # White text on dark sections
+]
+
+print("CONTRAST CHECK RESULTS:")
+for fg, bg, min_ratio in pairs_to_check:
+    ratio = check_contrast(palette[fg], palette[bg])
+    status = "PASS" if ratio >= min_ratio else "FAIL"
+    print(f"  {fg} on {bg}: {ratio:.1f}:1 (need {min_ratio}:1) [{status}]")
+```
+
+**Requirements:**
+- Normal text (< 18pt): minimum **4.5:1**
+- Large text (≥ 18pt or 14pt bold): minimum **3:1**
+- **DO NOT proceed with any design that has FAIL results**
+
+**Common failures:**
+- Gray text (#666) on white — ratio is only 5.7:1, barely passes
+- Dark green text on dark green background — FAILS
+- Light yellow on white — FAILS
+- "Muted" text that's too faint
+
+---
+
+### 2. NO EMOJIS
+Never use emojis anywhere in generated content — not in headings, paragraphs, button text, or any other text.
+
+### 3. NO ORPHANS
+Always use CSS text-wrap:
+```css
+h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+p { text-wrap: pretty; }
+```
 
 - **IMAGE COLOR COHESION**: Hero and prominent images MUST incorporate the site's color palette. No random stock photos.
 
