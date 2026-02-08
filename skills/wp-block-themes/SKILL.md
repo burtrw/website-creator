@@ -7,6 +7,15 @@ description: "Use when developing WordPress block themes - theme.json (global se
 
 ## Absolute Rules
 - **NO EMOJIS**: Never use emojis anywhere in generated content - not in headings, paragraphs, button text, or any other text. This applies to all templates, patterns, and content.
+- **NO ORPHANS**: Always use CSS text-wrap to prevent single words on their own line:
+  ```css
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;  /* Balances line lengths in headings */
+  }
+  p {
+    text-wrap: pretty;   /* Prevents orphan words in paragraphs */
+  }
+  ```
 
 ---
 

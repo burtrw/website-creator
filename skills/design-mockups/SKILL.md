@@ -113,6 +113,20 @@ Each mockup should be a single HTML file with embedded CSS:
 3. **Use real-ish content** — Avoid lorem ipsum when possible
 4. **Mobile responsive** — Test at mobile widths
 5. **4-5 key colors** — Define a clear palette in CSS variables
+6. **No orphans** — Use text-wrap to prevent single words on their own line
+
+### Typography Rules
+
+Always include these text-wrap rules to prevent ugly orphan words:
+
+```css
+h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;  /* Balances line lengths in headings */
+}
+p {
+    text-wrap: pretty;   /* Prevents orphan words in paragraphs */
+}
+```
 
 ### Color Palette Convention
 
