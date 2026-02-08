@@ -468,6 +468,103 @@ If you get "Stylesheet is missing" error, the zip structure is wrong.
 ### Writing Large Files (Base64 Data)
 **IMPORTANT:** The Write tool times out with large strings (~20KB+). Always use Python to write files containing base64-encoded theme data.
 
+### Complete Blueprint Encoding Recipe
+
+Use this Python script to build the entire preview package:
+
+```python
+python3 << 'PYTHON_EOF'
+import base64
+import json
+import os
+
+THEME_NAME = "theme-name"  # Change this
+PROJECT_DIR = "/path/to/project"  # Change this
+
+os.chdir(PROJECT_DIR)
+
+# 1. Base64 encode the theme.zip
+with open('theme.zip', 'rb') as f:
+    theme_data = base64.b64encode(f.read()).decode('utf-8')
+
+# 2. Build the blueprint with inline data URL
+blueprint = {
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "landingPage": "/",
+    "preferredVersions": {
+        "php": "8.0",
+        "wp": "latest"
+    },
+    "steps": [
+        {
+            "step": "writeFile",
+            "path": f"/wordpress/wp-content/themes/{THEME_NAME}.zip",
+            "data": {
+                "resource": "url",
+                "url": f"data:application/zip;base64,{theme_data}"
+            }
+        },
+        {
+            "step": "unzip",
+            "zipPath": f"/wordpress/wp-content/themes/{THEME_NAME}.zip",
+            "extractToPath": f"/wordpress/wp-content/themes/{THEME_NAME}"
+        },
+        {
+            "step": "activateTheme",
+            "themeFolderName": THEME_NAME
+        }
+    ]
+}
+
+# 3. Save blueprint.json
+with open('blueprint.json', 'w') as f:
+    json.dump(blueprint, f, indent=2)
+
+# 4. Encode for URL - CRITICAL: use compact JSON, minimal escaping
+blueprint_compact = json.dumps(blueprint, separators=(',', ':'))
+encoded_blueprint = blueprint_compact.replace(' ', '%20').replace('"', '%22')
+playground_url = f"https://playground.wordpress.net/#{encoded_blueprint}"
+
+# 5. Generate open-in-playground.html with theme styling
+html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{THEME_NAME} Theme Preview</title>
+    <style>
+        body {{ font-family: system-ui, sans-serif; max-width: 800px; margin: 4rem auto; padding: 2rem; }}
+        h1 {{ margin-bottom: 0.5rem; }}
+        .btn {{ display: inline-block; padding: 1rem 2rem; background: #007cba; color: white; text-decoration: none; border-radius: 4px; margin: 0.5rem 0.5rem 0.5rem 0; }}
+        .btn:hover {{ background: #005a87; }}
+        .btn.secondary {{ background: #50575e; }}
+    </style>
+</head>
+<body>
+    <h1>{THEME_NAME}</h1>
+    <p>WordPress Block Theme</p>
+
+    <h2>Preview</h2>
+    <a href="{playground_url}" class="btn" target="_blank">Open in WordPress Playground</a>
+
+    <h2>Download</h2>
+    <a href="data:application/zip;base64,{theme_data}" download="{THEME_NAME}.zip" class="btn secondary">Download theme.zip</a>
+</body>
+</html>'''
+
+with open('open-in-playground.html', 'w') as f:
+    f.write(html)
+
+print(f"Created: blueprint.json, open-in-playground.html")
+print(f"Theme data size: {len(theme_data)} chars")
+PYTHON_EOF
+```
+
+**URL Encoding Rules:**
+- Use **compact JSON**: `json.dumps(blueprint, separators=(',', ':'))`
+- Only escape quotes and spaces: `.replace(' ', '%20').replace('"', '%22')`
+- Do NOT use `urllib.parse.quote()` — it over-encodes and breaks Playground
+
 ### Sharing Playground Preview with Users
 
 **Workflow:**
